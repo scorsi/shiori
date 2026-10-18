@@ -37,7 +37,7 @@ One binary: all roles share input, config and rendering; Nix exposes one package
 
 ### Internal layout
 
-One Nim package (`keiki.nimble`, `lock.json`), modules under `src/keiki/`:
+One Nim package (`shiori.nimble`, `lock.json`), modules under `src/shiori/`:
 
 | Module     | Responsibility                                                                   |
 |------------|----------------------------------------------------------------------------------|
@@ -55,16 +55,16 @@ Fixtures under `tests/fixtures/*.json` are embedded at compile time (`staticRead
 
 | Invocation                           | Behaviour                                                              |
 |--------------------------------------|------------------------------------------------------------------------|
-| `keiki`                            | read stdin, render, print; what `settings.json` calls                   |
-| `keiki timings`                    | same, plus per-segment wall time on stderr (ADR 0007)                   |
-| `keiki preview [--fixture <name>]` | render an embedded fixture with the current config                      |
+| `shiori`                            | read stdin, render, print; what `settings.json` calls                   |
+| `shiori timings`                    | same, plus per-segment wall time on stderr (ADR 0007)                   |
+| `shiori preview [--fixture <name>]` | render an embedded fixture with the current config                      |
 | `--version`, `--help`                | the usual                                                              |
 
-Reserved, not designed: `keiki hook`, `keiki init`, `keiki tmux`. Adding them touches `cli` and a new module only.
+Reserved, not designed: `shiori hook`, `shiori init`, `shiori tmux`. Adding them touches `cli` and a new module only.
 
 ### Robustness rules
 
-- One `try`/`except CatchableError` in `main`; on failure print a fallback line (model name if parsed, else `keiki`) and exit 0.
+- One `try`/`except CatchableError` in `main`; on failure print a fallback line (model name if parsed, else `shiori`) and exit 0.
 - Default `--panics:off` so defects are catchable too.
 - stdout is the rendered line only; diagnostics on stderr.
 - `-d:release`, never `-d:danger`: bounds checks stay on.
@@ -82,7 +82,7 @@ Standard library plus one TOML library, chosen in ADR 0004. Anything else needs 
 
 ### Confirmation
 
-One executable from `nim c -d:release`. `keiki preview` works with no config file. `{}` or invalid JSON on stdin exits 0 with a non-empty line. ADR 0007's benchmark confirms the startup budget.
+One executable from `nim c -d:release`. `shiori preview` works with no config file. `{}` or invalid JSON on stdin exits 0 with a non-empty line. ADR 0007's benchmark confirms the startup budget.
 
 ## Pros and Cons of the Options
 

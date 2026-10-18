@@ -65,7 +65,7 @@ Rendered as SGR escapes; truecolour is emitted as given, no downsampling. Width 
 
 ### Confirmation
 
-Each segment has a fixture where it shows and one where it is empty (ADR 0008). `keiki preview` with the default preset prints every segment on a full fixture.
+Each segment has a fixture where it shows and one where it is empty (ADR 0008). `shiori preview` with the default preset prints every segment on a full fixture.
 
 ## Pros and Cons of the Options
 

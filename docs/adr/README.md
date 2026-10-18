@@ -4,7 +4,7 @@ Decisions are written in [MADR](https://adr.github.io/madr/) format, one file pe
 
 | ADR | Title | Status |
 |-----|-------|--------|
-| [0001](0001-scope-and-positioning.md) | Scope and positioning of keiki | accepted |
+| [0001](0001-scope-and-positioning.md) | Scope and positioning of shiori | accepted |
 | [0002](0002-language-and-architecture.md) | Language and binary architecture | accepted |
 | [0003](0003-input-contract.md) | Input contract with Claude Code | accepted |
 | [0004](0004-configuration-format.md) | Configuration file and format string | accepted |

@@ -10,7 +10,7 @@ decision-makers: scorsi
 
 Claude Code pipes one JSON document to the status line command and sets `COLUMNS` and `LINES`. The document grew field by field across 2.1.x releases, many fields are optional or `null` depending on plan, moment and version (`context_window.current_usage` is `null` before the first API reply and after `/compact`; `rate_limits` exists on Pro/Max only; `prompt_cache` since 2.1.251). Nothing is versioned in the document itself except the `version` string.
 
-How does keiki read this document so that any version, any plan and any moment produce a sensible line?
+How does shiori read this document so that any version, any plan and any moment produce a sensible line?
 
 ## Decision Drivers
 
@@ -56,7 +56,7 @@ Version policy: no minimum version is enforced. Fixtures (ADR 0008) are captured
 
 - Good: one place knows the JSON shape; segments are pure functions of `Input`.
 - Good: a Free plan, a session before its first reply, or Claude Code 2.0 all produce a line.
-- Bad: silently ignoring wrong types can hide upstream changes; the snapshot tests and `keiki timings` (which prints `version`) are the mitigation.
+- Bad: silently ignoring wrong types can hide upstream changes; the snapshot tests and `shiori timings` (which prints `version`) are the mitigation.
 - Neutral: `used_percentage` is taken as given rather than recomputed from tokens; Claude Code already accounts for autocompact buffer.
 
 ### Confirmation

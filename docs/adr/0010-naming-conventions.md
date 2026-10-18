@@ -28,10 +28,10 @@ The author's repositories carry Japanese names drawn from construction (jiban, i
 
 | Thing | Convention | Example |
 |-------|------------|---------|
-| Project, repository, binary, flake input | Japanese, lowercase romaji; flake input prefixed `scorsi-` in consumers | `keiki`, `scorsi-keiki` |
+| Project, repository, binary, flake input | Japanese, lowercase romaji; flake input prefixed `scorsi-` in consumers | `shiori`, `scorsi-shiori` |
 | Segments, variables, TOML keys | English `snake_case`, Starship's words when one exists | `git_branch`, `threshold_warn` |
 | Subcommands and flags | English, kebab-case | `timings`, `preview --fixture` |
-| Nix options | `programs.<project>.camelCase` | `programs.keiki.claudeCode.enable` |
+| Nix options | `programs.<project>.camelCase` | `programs.shiori.claudeCode.enable` |
 | Presets, palettes | English kebab-case; upstream theme names kept as spelled | `nerd-font`, `catppuccin-mocha` |
 | Files | kebab-case; ADRs `NNNN-kebab-title.md` | `0004-configuration-format.md` |
 | Nim modules | one lowercase word | `render`, `segments` |
@@ -42,7 +42,7 @@ The author's repositories carry Japanese names drawn from construction (jiban, i
 
 - Good: zero vocabulary to learn beyond the project name.
 - Good: renaming the project touches the binary name and Nix option prefix only; everything else is stable.
-- Bad: the name's meaning (計器, the gauges of a cockpit, a nod to Starship) is invisible in use; a line in the README explains it.
+- Bad: the name's meaning (栞, a bookmark: where you are in a session) is invisible in use; a line in the README explains it.
 
 ### Confirmation
 

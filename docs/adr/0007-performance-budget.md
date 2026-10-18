@@ -8,7 +8,7 @@ decision-makers: scorsi
 
 ## Context and Problem Statement
 
-Claude Code runs the status line several times a minute and kills a run when a new event arrives; a slow status line is a flickering or stale one. How fast must keiki be, and how is it kept there?
+Claude Code runs the status line several times a minute and kills a run when a new event arrives; a slow status line is a flickering or stale one. How fast must shiori be, and how is it kept there?
 
 ## Decision Drivers
 
@@ -27,7 +27,7 @@ Claude Code runs the status line several times a minute and kills a run when a n
 **Option 1.**
 
 - Budget: **5 ms** median wall time for the `plain` preset on the full fixture, measured on the author's machine with `hyperfine` (`nix run .#bench`). Startup included. Not a `nix flake check`: timing in a sandbox is noisy.
-- `keiki timings` prints, on stderr, microseconds for parsing input, parsing config, each evaluated segment, and rendering, plus the input `version`. This is the tool for finding a slow segment.
+- `shiori timings` prints, on stderr, microseconds for parsing input, parsing config, each evaluated segment, and rendering, plus the input `version`. This is the tool for finding a slow segment.
 - Laziness: `render` evaluates only segments referenced in the format AST, once each, even if referenced twice.
 - Rules that keep the budget: no subprocess, no network, no locks; filesystem reads limited to `git_branch` (two small files at most) and the config file; fixtures and presets embedded at compile time; avoid `std/re` and other heavy-init modules.
 - Release build flags: `-d:release`, `--opt:speed`, `--mm:orc` (default). No `-d:danger`.
@@ -41,7 +41,7 @@ Claude Code runs the status line several times a minute and kills a run when a n
 
 ### Confirmation
 
-`nix run .#bench` reports a median under 5 ms for `plain` on the full fixture. `keiki timings` on a format that references one segment lists exactly that segment.
+`nix run .#bench` reports a median under 5 ms for `plain` on the full fixture. `shiori timings` on a format that references one segment lists exactly that segment.
 
 ## Pros and Cons of the Options
 

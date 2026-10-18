@@ -1,6 +1,6 @@
-# keiki (計器)
+# shiori (栞)
 
-The gauges: a status line for [Claude Code](https://code.claude.com/docs/en/statusline), in Nim,
+A status line for [Claude Code](https://code.claude.com/docs/en/statusline), in Nim,
 configured like [Starship](https://starship.rs) (a TOML file, a `format` string), shipped as a Nix
 flake with a home-manager module. Consumed by [sekkeizu](https://github.com/scorsi/sekkeizu) as a
 pinned input; for fun and to show, not a product.
@@ -19,16 +19,16 @@ no subprocess, no network, under 5 ms.
 ## Using it
 
 ```bash
-nix run github:scorsi/keiki -- preview          # render a sample session with your config
-nix run github:scorsi/keiki -- timings          # per-segment timings on stdin JSON
+nix run github:scorsi/shiori -- preview          # render a sample session with your config
+nix run github:scorsi/shiori -- timings          # per-segment timings on stdin JSON
 ```
 
-Home-manager, in a flake that has `scorsi-keiki` as input:
+Home-manager, in a flake that has `scorsi-shiori` as input:
 
 ```nix
-imports = [ inputs.scorsi-keiki.homeModules.keiki ];
-programs.keiki = {
-  enable = true;                 # installs the binary and writes ~/.config/keiki.toml
+imports = [ inputs.scorsi-shiori.homeModules.shiori ];
+programs.shiori = {
+  enable = true;                 # installs the binary and writes ~/.config/shiori.toml
   preset = "nerd-font";          # or "plain" (default)
   settings.palette = "catppuccin-mocha";
   # claudeCode.enable = true;    # default: adds statusLine to ~/.claude/settings.json, keeps the rest
@@ -40,7 +40,7 @@ owning the file, so Claude Code can keep writing to it.
 
 ## Configuration
 
-`$KEIKI_CONFIG`, else `~/.config/keiki.toml`, else built-in defaults. A Starship user needs no
+`$SHIORI_CONFIG`, else `~/.config/shiori.toml`, else built-in defaults. A Starship user needs no
 manual:
 
 ```toml
@@ -63,16 +63,16 @@ grammar: [ADR 0004](docs/adr/0004-configuration-format.md).
 
 | Output                | What it is                                                              |
 | --------------------- | ----------------------------------------------------------------------- |
-| `packages.default`    | the `keiki` binary (`buildNimPackage`, `lock.json` from `nim_lk`)        |
-| `homeModules.keiki`   | `programs.keiki.*`: config file, preset, Claude Code integration        |
-| `overlays.default`    | adds `keiki`                                                            |
+| `packages.default`    | the `shiori` binary (`buildNimPackage`, `lock.json` from `nim_lk`)        |
+| `homeModules.shiori`   | `programs.shiori.*`: config file, preset, Claude Code integration        |
+| `overlays.default`    | adds `shiori`                                                            |
 | `checks`              | snapshot and unit tests on fixtures, formatting                         |
 | `apps.bench`, `apps.lock` | `hyperfine` run against the 5 ms budget; regenerate `lock.json`     |
 
 ## Layout (planned)
 
 ```
-src/keiki/          input, config, format, segments, style, render, cli
+src/shiori/          input, config, format, segments, style, render, cli
 presets/            plain.toml, nerd-font.toml
 tests/fixtures/     sanitised Claude Code stdin documents
 tests/snapshots/    expected output per fixture and preset
@@ -82,5 +82,6 @@ docs/adr/           decisions; docs/milestones.md the plan
 
 ## Name
 
-計器 are the instruments of a cockpit: what you glance at while flying. The project was first
-called hikouki (飛行機, aeroplane), a nod to Starship; the gauges are what you actually look at.
+栞 is a bookmark: the strip that tells you where you are in a book, as the status line tells you
+where you are in a session. The project was first called hikouki (飛行機, aeroplane, a nod to
+Starship), then keiki (計器, cockpit gauges), renamed because it read too close to kekkai.
