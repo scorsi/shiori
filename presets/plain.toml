@@ -1,0 +1,42 @@
+# The built-in default: ASCII and named colours only. It lists every key the binary knows, so
+# a key missing here is rejected as unknown in a user file.
+
+# `[ $segment]()` is a group with no style: it disappears with its leading space when the
+# segment has nothing to show.
+format = "$model[ $effort]()[ $context]()[ $rate_limits]()"
+
+[model]
+format = "[$name]($style)"
+symbol = ""
+style = "bold cyan"
+disabled = false
+
+[effort]
+format = "[$symbol$level]($style)"
+symbol = ""
+style = "blue"
+disabled = false
+hide_levels = []
+
+[context]
+format = "[${symbol}ctx \\[$bar\\] $percentage%]($style)[ ($tokens)](dim)"
+symbol = ""
+style = "green"
+style_warn = "yellow"
+style_critical = "red"
+threshold_warn = 70
+threshold_critical = 90
+bar_width = 10
+bar_fill = "#"
+bar_empty = "-"
+disabled = false
+
+[rate_limits]
+format = "[${symbol}5h $five_hour%]($style)[ ($five_hour_reset)](dim)[ 7d $seven_day%]($style)[ ($seven_day_reset)](dim)"
+symbol = ""
+style = "green"
+style_warn = "yellow"
+style_critical = "red"
+threshold_warn = 70
+threshold_critical = 90
+disabled = false
