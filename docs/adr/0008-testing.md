@@ -30,7 +30,7 @@ The program is a pure function from (stdin JSON, config, `COLUMNS`) to text. Cla
 - `tests/snapshots/<fixture>.<preset>.txt`: expected stdout for each fixture and each preset, ANSI included. A test renders and compares; `SHIORI_UPDATE_SNAPSHOTS=1` rewrites them and the diff is reviewed in git.
 - Unit tests for `format` (grammar of ADR 0004), `style` (words to SGR, display width), `input` (type tolerance), and `git_branch` on temporary directories (branch, detached, worktree file, no repo).
 - Contract check: a test asserts that every field in ADR 0003's table is present in `full`, so bumping the reference version and recapturing fails loudly if a field vanished.
-- Run with `nim r tests/all.nim`; `buildNimPackage`'s `doCheck` runs the same in the flake check. Fixtures are embedded with `staticRead` so `preview` and tests share them.
+- Run with `nim r tests/tall.nim` in the dev shell; `buildNimPackage`'s `doCheck` runs every `tests/t*.nim` in the flake check. Fixtures are embedded with `staticRead` so `preview` and tests share them.
 
 ### Consequences
 
