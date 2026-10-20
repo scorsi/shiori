@@ -1,0 +1,46 @@
+{
+  lib,
+  buildNimPackage,
+}:
+
+buildNimPackage (finalAttrs: {
+  pname = "shiori";
+  # Keep in step with shiori.nimble.
+  version = "0.1.0";
+
+  # Only what the build and the tests read: editing the README or the Nix files keeps the store path.
+  src = lib.fileset.toSource {
+    root = ../.;
+    fileset = lib.fileset.unions [
+      ../shiori.nimble
+      ../config.nims
+      ../src
+      ../presets
+      ../tests
+    ];
+  };
+
+  lockFile = ../lock.json;
+  nimFlags = [ "-d:NimblePkgVersion=${finalAttrs.version}" ];
+
+  # The robustness rules of ADR 0002, on the installed binary: never a blank line, always exit 0.
+  doInstallCheck = true;
+  installCheckPhase = ''
+    runHook preInstallCheck
+    for input in '{}' 'garbage' '[1]'; do
+      got=$(echo "$input" | HOME=$TMPDIR $out/bin/shiori)
+      [ "$got" = shiori ] || { echo "unexpected output for $input: $got"; exit 1; }
+    done
+    got=$(echo '{"model":{"id":"m"}}' | HOME=$TMPDIR SHIORI_CONFIG=${builtins.toFile "bad.toml" "format = 1"} $out/bin/shiori 2>/dev/null)
+    [ -n "$got" ] || { echo "blank line on a bad config"; exit 1; }
+    runHook postInstallCheck
+  '';
+
+  passthru.presets = ../presets;
+
+  meta = {
+    description = "A Starship-style status line for Claude Code";
+    license = lib.licenses.mit;
+    mainProgram = "shiori";
+  };
+})
