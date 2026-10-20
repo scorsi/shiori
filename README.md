@@ -7,7 +7,7 @@ pinned input; for fun and to show, not a product.
 
 **Status: milestone 1.** The binary renders `model`, `effort`, `context` and `rate_limits` with the
 built-in `plain` preset; the other segments, presets, `preview` and `timings` come with milestone 2.
-Develop with `direnv allow` (or `nix develop`), then `nim r tests/tall.nim`. The decisions are in [`docs/adr/`](docs/adr/README.md)
+Develop with `direnv allow` (or `nix develop`), then `nim r tests/t<module>.nim`. The decisions are in [`docs/adr/`](docs/adr/README.md)
 (ten records, MADR format) and the plan in [`docs/milestones.md`](docs/milestones.md). What follows
 describes the tool those decisions specify.
 
