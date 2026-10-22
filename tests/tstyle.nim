@@ -34,6 +34,11 @@ suite "style":
     check clip("\e[31mabc\e[0m", 2) == "\e[31mab\e[0m"
     check clip("a", 0) == ""
 
+  test "styled whitespace is still blank":
+    check isBlank("\e[31m \e[0m")
+    check isBlank("\u0301")
+    check not isBlank("\e[31mx\e[0m")
+
   test "padding uses cells and finishes an odd width with spaces":
     check padding("日", 5) == "日日 "
     check padding("", 3) == "   "

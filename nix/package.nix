@@ -33,6 +33,15 @@ buildNimPackage (finalAttrs: {
     done
     got=$(echo '{"model":{"id":"m"}}' | HOME=$TMPDIR SHIORI_CONFIG=${builtins.toFile "bad.toml" "format = 1"} $out/bin/shiori 2>/dev/null)
     [ -n "$got" ] || { echo "blank line on a bad config"; exit 1; }
+    for fixture in full minimal invalid pre-first-reply free-plan post-compact detached-head narrow; do
+      got=$(HOME=$TMPDIR COLUMNS=40 $out/bin/shiori preview --fixture "$fixture")
+      [ -n "$got" ] || { echo "blank preview for $fixture"; exit 1; }
+    done
+    SHIORI_CONFIG=${builtins.toFile "one-segment.toml" "format = '$model$model'"} \
+      $out/bin/shiori timings < tests/fixtures/full.json > "$TMPDIR/line" 2> "$TMPDIR/timings"
+    [ "$(grep -c '^segment\.' "$TMPDIR/timings")" = 1 ]
+    grep -q '^segment.model:' "$TMPDIR/timings"
+    [ -s "$TMPDIR/line" ]
     runHook postInstallCheck
   '';
 

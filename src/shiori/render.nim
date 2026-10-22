@@ -1,6 +1,6 @@
 ## Walks the format AST, evaluates only the segments it references, assembles the line.
 
-import std/[os, strutils, tables]
+import std/[monotimes, os, strutils, tables, times]
 import format, style, input, config, segments
 
 type Lookup = proc(name: string): string
@@ -45,32 +45,38 @@ proc columns*(): int =
     discard
   if result <= 0: result = 80
 
-proc render*(inp: Input, c: Config, now: int64, width = columns()): string =
+proc render*(inp: Input, c: Config, now: int64, width = columns(), timings = false): string =
   ## The status line, possibly several lines; "" when nothing has anything to show.
   var cache: Table[string, string]
   let top = parseFormat(c.topFormat)
   let line = renderFormat(top, c.palette) do (name: string) -> string:
-    if name == "fill":
-      if c.boolean("fill", "disabled"): return ""
-      let code = sgr(c.str("fill", "style"), c.palette)
-      return code & "\0" & (if code == "": "" else: reset)
+    if name in ["style", "symbol"]: return ""
     if name notin cache:
-      let vars = evaluate(name, inp, c, now)
-      cache[name] =
-        if vars.len == 0: ""
-        else:
-          renderFormat(parseFormat(c.str(name, "format")), c.palette) do (v: string) -> string:
-            vars.getOrDefault(v)
+      if c.boolean(name, "disabled"):
+        cache[name] = ""
+        return ""
+      let start = if timings: getMonoTime() else: default(MonoTime)
+      if name == "fill":
+        let code = sgr(c.str("fill", "style"), c.palette)
+        cache[name] = code & "\0" & (if code == "": "" else: reset)
+      else:
+        let vars = evaluate(name, inp, c, now)
+        cache[name] =
+          if vars.len == 0: ""
+          else:
+            renderFormat(parseFormat(c.str(name, "format")), c.palette) do (v: string) -> string:
+              vars.getOrDefault(v)
+      if timings: stderr.writeLine "segment." & name & ": " & $(getMonoTime() - start).inMicroseconds & " us"
     cache[name]
   for part in line.splitLines:
     var text = part.replace("\0", "")
-    if text.strip == "" or text.displayWidth == 0: continue
+    if text.isBlank: continue
     let fill = part.find('\0')
     if fill >= 0:
       let pad = padding(c.str("fill", "symbol"), width - text.displayWidth)
       text = part[0 ..< fill] & pad &
         part[fill + 1 .. ^1].replace("\0", "")
     text = text.clip(width)
-    if text.displayWidth == 0: continue
+    if text.isBlank: continue
     if result != "": result.add "\n"
     result.add text

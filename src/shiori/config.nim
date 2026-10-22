@@ -108,12 +108,11 @@ proc configPath*(): string =
   let xdg = getEnv("XDG_CONFIG_HOME")
   result = (if xdg != "": xdg else: getHomeDir() / ".config") / "shiori.toml"
 
-proc loadConfig*(): Config =
+proc loadConfig*(path = configPath()): Config =
   ## Missing file: defaults, silently. Any other error: one stderr line, then defaults.
-  let path = configPath()
   if not fileExists(path): return defaultConfig()
   try:
     parseConfig(readFile(path))
   except CatchableError as e:
-    stderr.writeLine "shiori: " & path & ": " & e.msg & "; using defaults"
+    stderr.writeLine ("shiori: " & path & ": " & e.msg & "; using defaults").splitLines.join(" ")
     defaultConfig()

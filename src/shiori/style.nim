@@ -108,6 +108,11 @@ iterator cells(s: string): tuple[text: string, width: int] =
 proc displayWidth*(s: string): int =
   for cell in s.cells: result += cell.width
 
+proc isBlank*(s: string): bool =
+  for cell in s.cells:
+    if cell.width > 0 and not cell.text.allCharsInSet(Whitespace): return false
+  true
+
 proc clip*(s: string, width: int): string =
   var used = 0
   for cell in s.cells:
