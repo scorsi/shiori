@@ -1,12 +1,12 @@
 ## Walks the format AST, evaluates only the segments it references, assembles the line.
 
-import std/[strutils, tables]
+import std/[os, strutils, tables]
 import format, style, input, config, segments
 
 type Lookup = proc(name: string): string
 
-# `$symbol` and `$style` are always set, so they do not keep a group alive.
-const meta = ["symbol", "style"]
+# Decoration does not keep an otherwise empty group alive.
+const meta = ["symbol", "style", "fill"]
 
 proc expand(nodes: seq[Node], lookup: Lookup, styles: var seq[string],
     used, filled: var int): string =
@@ -38,11 +38,19 @@ proc renderFormat(f: Format, lookup: Lookup): string =
   var (u, f2) = (0, 0)
   expand(f, lookup, styles, u, f2)
 
-proc render*(inp: Input, c: Config, now: int64): string =
+proc columns*(): int =
+  try:
+    result = parseInt(getEnv("COLUMNS", "80"))
+  except ValueError:
+    discard
+  if result <= 0: result = 80
+
+proc render*(inp: Input, c: Config, now: int64, width = columns()): string =
   ## The status line, possibly several lines; "" when nothing has anything to show.
   var cache: Table[string, string]
   let top = parseFormat(c.topFormat)
   let line = renderFormat(top) do (name: string) -> string:
+    if name == "fill": return (if c.boolean("fill", "disabled"): "" else: "\0")
     if name notin cache:
       let vars = evaluate(name, inp, c, now)
       cache[name] =
@@ -52,6 +60,15 @@ proc render*(inp: Input, c: Config, now: int64): string =
             vars.getOrDefault(v)
     cache[name]
   for part in line.splitLines:
-    if part.strip == "": continue
+    var text = part.replace("\0", "")
+    if text.strip == "" or text.displayWidth == 0: continue
+    let fill = part.find('\0')
+    if fill >= 0:
+      let code = sgr(c.str("fill", "style"))
+      let pad = padding(c.str("fill", "symbol"), width - text.displayWidth)
+      text = part[0 ..< fill] & code & pad & (if code == "": "" else: reset) &
+        part[fill + 1 .. ^1].replace("\0", "")
+    text = text.clip(width)
+    if text.displayWidth == 0: continue
     if result != "": result.add "\n"
-    result.add part
+    result.add text

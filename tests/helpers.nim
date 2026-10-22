@@ -9,11 +9,12 @@ const
   # Every fixture is rendered at this instant: 2026-10-20T12:00:00Z.
   now* = 1792497600'i64
   fixtures* = ["full", "minimal", "invalid", "pre-first-reply", "free-plan",
-    "post-compact", "detached-head"]
+    "post-compact", "detached-head", "narrow"]
 
 proc fixture*(name: string): string = readFile(here / "fixtures" / name & ".json")
 
-proc renderWith*(toml, json: string): string = render(parseInput(json), parseConfig(toml), now)
+proc renderWith*(toml, json: string, width = 80): string =
+  render(parseInput(json), parseConfig(toml), now, width)
 
 proc snapshot*(toml, name: string): string =
   let home = createTempDir("shiori-", "", here)
@@ -26,4 +27,4 @@ proc snapshot*(toml, name: string): string =
   writeFile(home / "project" / ".git" / "HEAD",
     if name == "detached-head": "0123456789abcdef0123456789abcdef01234567\n"
     else: "ref: refs/heads/main\n")
-  renderWith(toml, fixture(name).replace("/home/user", home))
+  renderWith(toml, fixture(name).replace("/home/user", home), if name == "narrow": 40 else: 80)

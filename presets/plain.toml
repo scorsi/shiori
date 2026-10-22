@@ -4,7 +4,7 @@
 # `[ $segment]()` is a group with no style: it disappears with its leading space when the
 # segment has nothing to show.
 format = """
-$model[ $effort]()[ $context]()[ $rate_limits]()
+$model[ $effort]()[ $context]()[ $fill$rate_limits]()
 $directory[ $git_branch]()[ $cost]()[ $session_name]()[ $vim_mode]()
 """
 
@@ -12,6 +12,12 @@ $directory[ $git_branch]()[ $cost]()[ $session_name]()[ $vim_mode]()
 format = "[$name]($style)"
 symbol = ""
 style = "bold cyan"
+disabled = false
+
+[fill]
+format = "$symbol"
+symbol = " "
+style = ""
 disabled = false
 
 [effort]
