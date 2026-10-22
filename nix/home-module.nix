@@ -9,12 +9,16 @@ self:
 let
   cfg = config.programs.shiori;
   toml = pkgs.formats.toml { };
+  presets = cfg.package.presets;
+  settings = lib.recursiveUpdate (builtins.fromTOML (
+    builtins.readFile (presets + "/${cfg.preset}.toml")
+  )) cfg.settings;
   claudeCodeModule = config.programs ? claude-code && config.programs.claude-code.enable;
   patch = pkgs.writeText "shiori-claude-code-settings.json" (
     builtins.toJSON {
       statusLine = {
         type = "command";
-        command = lib.getExe cfg.package;
+        command = "SHIORI_CONFIG=${lib.escapeShellArg cfg.configFile} ${lib.getExe cfg.package}";
       };
     }
   );
@@ -34,7 +38,24 @@ in
       inherit (toml) type;
       default = { };
       example = lib.literalExpression ''{ context.bar_width = 6; effort.hide_levels = [ "medium" ]; }'';
-      description = "Written to ~/.config/shiori.toml; keys left out keep the built-in defaults.";
+      description = "Recursively merged over the preset; arrays are replaced wholesale.";
+    };
+
+    preset = lib.mkOption {
+      type = lib.types.enum (
+        map (lib.removeSuffix ".toml") (
+          builtins.filter (name: lib.hasSuffix ".toml" name) (builtins.attrNames (builtins.readDir presets))
+        )
+      );
+      default = "plain";
+      description = "The complete preset to use as the base configuration.";
+    };
+
+    configFile = lib.mkOption {
+      type = lib.types.path;
+      default = "${config.xdg.configHome}/shiori.toml";
+      defaultText = lib.literalExpression ''"''${xdg.configHome}/shiori.toml"'';
+      description = "Absolute path under the home directory for the generated TOML file.";
     };
 
     claudeCode = {
@@ -59,7 +80,8 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages = [ cfg.package ];
-    xdg.configFile."shiori.toml".source = toml.generate "shiori.toml" cfg.settings;
+    home.file.${cfg.configFile}.source = toml.generate "shiori.toml" settings;
+    home.sessionVariables.SHIORI_CONFIG = cfg.configFile;
 
     # Merged into the mutable file rather than owning it: Claude Code writes to it too.
     home.activation.shioriClaudeCode = lib.mkIf cfg.claudeCode.enable (

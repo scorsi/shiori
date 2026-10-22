@@ -91,6 +91,8 @@ proc gitBranch(inp: Input, c: Config): Vars =
   var dir = inp.directoryPath
   if dir == "": return
   dir = absolutePath(dir).normalizedPath
+  # A deleted or synthetic working directory cannot have a repository to inspect.
+  if not dirExists(dir): return
   while true:
     let dotgit = dir / ".git"
     if dirExists(dotgit) or fileExists(dotgit):

@@ -70,12 +70,14 @@ suite "segments":
     let c = defaultConfig()
     createDir(root / ".git")
     let inp = Input(cwd: some(root / "repo" / "nested"))
+    check evaluate("git_branch", inp, c, now).len == 0
     createDir(inp.cwd.get)
     check evaluate("git_branch", inp, c, now).len == 0
     createDir(root / "repo" / ".git")
     let head = root / "repo" / ".git" / "HEAD"
     writeFile(head, "ref: refs/heads/feature/日本語\n")
     check evaluate("git_branch", inp, c, now)["branch"] == "feature/日本語"
+    check evaluate("git_branch", Input(cwd: some(root / "repo" / "deleted")), c, now).len == 0
     check evaluate("git_branch", inp, parseConfig("[git_branch]\ntruncation_length = 9"), now)["branch"] == "feature/日"
     writeFile(head, "0123456789abcdef0123456789abcdef01234567\n")
     check evaluate("git_branch", inp, c, now)["branch"] == "0123456"

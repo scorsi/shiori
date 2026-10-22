@@ -63,6 +63,13 @@ grammar: [ADR 0004](docs/adr/0004-configuration-format.md).
 
 ## Flake outputs
 
+Benchmark on the author's Apple Silicon machine (`aarch64-darwin`, 2026-10-22):
+**1.725 ms median**, below the 5 ms budget. `nix run .#bench` measures the release binary with
+`plain`, `COLUMNS=80`, ten warmups and 100 runs, including startup and config loading, without
+a shell. The `full` fixture's workspace paths are mapped to a temporary local repository with
+a `main` HEAD, as in the snapshots. This avoids macOS automounting the synthetic `/home/user`
+path and includes a real Git HEAD read. The temporary files are removed afterwards.
+
 | Output                | What it is                                                              |
 | --------------------- | ----------------------------------------------------------------------- |
 | `packages.default`    | the `shiori` binary (`buildNimPackage`, `lock.json` from `nim_lk`)        |
