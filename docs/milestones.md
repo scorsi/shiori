@@ -29,6 +29,17 @@ Ordered so that the author runs shiori daily from the first milestone on. Each m
 
 ## M2 — Full version 1
 
+**Delivered in the repository (2026-10-22).** All ten segments, Unicode display width and
+40-column clipping, both complete presets, palettes, embedded previews, lazy timings,
+home-manager preset/config-file options and evaluation checks, and the bench/lock apps are
+implemented. All eight fixtures have snapshots for both presets; Git branch, detached HEAD,
+worktree and missing-repository tests use temporary directories. `nix flake check` passes on
+`aarch64-darwin`. The measured median is recorded in the README with the fixture setup.
+
+**Remaining manual acceptance:** update sekkeizu's pinned input after review and publication,
+activate `nerd-font` with `settings.palette = "catppuccin-mocha"`, and confirm daily use.
+The repository task does not modify sekkeizu.
+
 **Goal**: the ten segments, presets and palettes, developer tooling, performance budget met.
 
 **In**
@@ -50,6 +61,15 @@ Ordered so that the author runs shiori daily from the first milestone on. Each m
 **ADRs**: 0005, 0006, 0007, 0008, 0009 (complete).
 
 ## M3 — Publish
+
+**Repository deliverables complete (2026-10-22).** MIT license, installation instructions,
+full TOML reference, preset images, performance method and result, and a test enumerating all
+preset keys against the README are included. The ten ADRs were already accepted and remain so.
+
+**External acceptance pending:** execute checks on a Linux builder; confirm installation in a
+fresh real home-manager configuration and `nix run github:scorsi/shiori -- preview` after the
+reviewed commits are published. The existing Forgejo workflow is left unchanged; runner setup
+and the GitHub mirror are outside this repository task. Publication follows review.
 
 **Goal**: someone else could use it.
 

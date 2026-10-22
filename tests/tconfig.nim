@@ -17,6 +17,11 @@ suite "config":
     check c.integer("context", "bar_width") == 4
     check c.integer("context", "threshold_warn") == 70
 
+  test "fill units cannot introduce extra status lines":
+    for key in ["format", "symbol"]:
+      expect ValueError:
+        discard parseConfig("[fill]\n" & key & " = \"x\\ny\"")
+
   test "every preset parses":
     let defaults = Toml.decode(readFile(here.parentDir / "presets" / "plain.toml"), TomlValueRef)
     for path in walkFiles(here.parentDir / "presets" / "*.toml"):

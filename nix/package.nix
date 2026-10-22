@@ -8,12 +8,13 @@ buildNimPackage (finalAttrs: {
   # Keep in step with shiori.nimble.
   version = "0.1.0";
 
-  # Only what the build and the tests read: editing the README or the Nix files keeps the store path.
+  # Include the README because the configuration reference is checked against every preset.
   src = lib.fileset.toSource {
     root = ../.;
     fileset = lib.fileset.unions [
       ../shiori.nimble
       ../config.nims
+      ../README.md
       ../src
       ../presets
       ../tests

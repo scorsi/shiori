@@ -19,6 +19,7 @@ suite "render":
     check renderWith("format = '日$fill🐱'\n[fill]\nsymbol = '.'", "{}", 7) == "日...🐱"
     check renderWith("format = 'L$fill R'\n[fill]\ndisabled = true", "{}", 8) == "L R"
     check renderWith("format = 'L$fill R'\n[fill]\nsymbol = '日'", "{}", 8) == "L日日  R"
+    check renderWith("format = 'L$fill R'\n[fill]\nformat = '-$symbol'\nsymbol = '.'", "{}", 8) == "L-.-.  R"
     check renderWith("format = 'L$fill R'\n[fill]\nstyle = 'dim'", "{}", 5) == "L\e[2m  \e[0m R"
     check renderWith("format = '[L$fill R](red)'\n[fill]\nstyle = 'dim'", "{}", 5) ==
       "\e[31mL\e[2m  \e[0m\e[31m R\e[0m"

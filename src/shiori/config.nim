@@ -44,6 +44,8 @@ proc checkFormat(f: Format, palette: Palette) =
 proc checkValue(path: string, v: TomlValueRef, palette: Palette) =
   ## Formats and literal styles are parsed now, so a typo fails at load rather than at render.
   if v.kind != TomlKind.String: return
+  if path in ["fill.format", "fill.symbol"] and ('\n' in v.stringVal or '\r' in v.stringVal):
+    raise newException(ValueError, path & " must fit on one line")
   if path.endsWith("format"): checkFormat(parseFormat(v.stringVal), palette)
   elif path.contains("style") and not v.stringVal.startsWith("$"): discard sgr(v.stringVal, palette)
 

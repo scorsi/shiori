@@ -89,5 +89,8 @@ suite "segments":
     check evaluate("git_branch", inp, c, now)["branch"] == "worktree"
     writeFile(root / "repo" / ".git", "gitdir: " & root / "gitdir" & "\n")
     check evaluate("git_branch", inp, c, now)["branch"] == "worktree"
+    moveDir(root / "gitdir", root / "gitdir ")
+    writeFile(root / "repo" / ".git", "gitdir: ../gitdir \n")
+    check evaluate("git_branch", inp, c, now)["branch"] == "worktree"
     writeFile(root / "repo" / ".git", "broken")
     check evaluate("git_branch", inp, c, now).len == 0

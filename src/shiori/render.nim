@@ -48,6 +48,7 @@ proc columns*(): int =
 proc render*(inp: Input, c: Config, now: int64, width = columns(), timings = false): string =
   ## The status line, possibly several lines; "" when nothing has anything to show.
   var cache: Table[string, string]
+  var fillSymbol: string
   let top = parseFormat(c.topFormat)
   let line = renderFormat(top, c.palette) do (name: string) -> string:
     if name in ["style", "symbol"]: return ""
@@ -57,6 +58,8 @@ proc render*(inp: Input, c: Config, now: int64, width = columns(), timings = fal
         return ""
       let start = if timings: getMonoTime() else: default(MonoTime)
       if name == "fill":
+        fillSymbol = renderFormat(parseFormat(c.str("fill", "format")), c.palette) do (v: string) -> string:
+          if v in ["symbol", "style"]: c.str("fill", v) else: ""
         let code = sgr(c.str("fill", "style"), c.palette)
         cache[name] = code & "\0" & (if code == "": "" else: reset)
       else:
@@ -73,7 +76,7 @@ proc render*(inp: Input, c: Config, now: int64, width = columns(), timings = fal
     if text.isBlank: continue
     let fill = part.find('\0')
     if fill >= 0:
-      let pad = padding(c.str("fill", "symbol"), width - text.displayWidth)
+      let pad = padding(fillSymbol, width - text.displayWidth)
       text = part[0 ..< fill] & pad &
         part[fill + 1 .. ^1].replace("\0", "")
     text = text.clip(width)

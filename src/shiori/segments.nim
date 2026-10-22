@@ -99,7 +99,7 @@ proc gitBranch(inp: Input, c: Config): Vars =
       try:
         var gitdir = dotgit
         if fileExists(dotgit):
-          let link = readFile(dotgit).strip
+          let link = readFile(dotgit).strip(chars = {'\r', '\n'})
           if not link.startsWith("gitdir: "): return
           gitdir = absolutePath(link[8 .. ^1], dir)
         let head = readFile(gitdir / "HEAD").strip
