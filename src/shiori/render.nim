@@ -51,4 +51,7 @@ proc render*(inp: Input, c: Config, now: int64): string =
           renderFormat(parseFormat(c.str(name, "format"))) do (v: string) -> string:
             vars.getOrDefault(v)
     cache[name]
-  line.strip(leading = false, chars = {'\n'})
+  for part in line.splitLines:
+    if part.strip == "": continue
+    if result != "": result.add "\n"
+    result.add part

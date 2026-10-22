@@ -1,0 +1,2 @@
+[1;36mOpus 5.5[0m [34mmedium[0m [32mctx [##--------] 23%[0m[2m (45k/200k)[0m [33m5h 75%[0m[2m (2h13m)[0m[33m 7d 40%[0m[2m (2d3h)[0m
+[34m~/project[0m [35m0123456[0m [33m$1.25[0m[2m 1h02m[0m[32m +120[0m[31m -30[0m [2mRefactor the status line[0m [1;34mNORMAL[0m

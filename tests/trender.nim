@@ -18,6 +18,6 @@ suite "render":
     for name in fixtures:
       checkpoint name
       let path = here / "snapshots" / name & ".plain.txt"
-      let got = renderWith(plain, fixture(name)) & "\n"
+      let got = snapshot(plain, name) & "\n"
       if existsEnv("SHIORI_UPDATE_SNAPSHOTS"): writeFile(path, got)
       else: check got == readFile(path)

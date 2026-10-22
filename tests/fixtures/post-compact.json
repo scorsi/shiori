@@ -1,0 +1,73 @@
+{
+  "session_id": "00000000-0000-4000-8000-000000000001",
+  "transcript_path": "/home/user/.claude/projects/-home-user-project/00000000-0000-4000-8000-000000000001.jsonl",
+  "cwd": "/home/user/project",
+  "scratchpad_dir": "/tmp/claude-1000/-home-user-project/00000000-0000-4000-8000-000000000001/scratchpad",
+  "prompt_id": "00000000-0000-4000-8000-000000000002",
+  "effort": {
+    "level": "medium"
+  },
+  "session_name": "Refactor the status line",
+  "model": {
+    "id": "claude-opus-5-5",
+    "display_name": "Opus 5.5"
+  },
+  "workspace": {
+    "current_dir": "/home/user/project",
+    "project_dir": "/home/user/project",
+    "added_dirs": []
+  },
+  "version": "2.1.296",
+  "output_style": {
+    "name": "default"
+  },
+  "cost": {
+    "total_cost_usd": 1.25,
+    "total_duration_ms": 3720000,
+    "total_api_duration_ms": 900000,
+    "total_lines_added": 120,
+    "total_lines_removed": 30
+  },
+  "context_window": {
+    "total_input_tokens": 45000,
+    "total_output_tokens": 2000,
+    "context_window_size": 200000,
+    "current_usage": null,
+    "used_percentage": null,
+    "remaining_percentage": null
+  },
+  "exceeds_200k_tokens": false,
+  "prompt_cache": {
+    "warm": true,
+    "caching_observed": true,
+    "ttl": "1h",
+    "expires_at": 1792501200,
+    "requests": 10,
+    "misses": 0,
+    "expected_rebuilds": 0,
+    "hit_ratio": 0.9,
+    "cache_write_tokens": 40000,
+    "miss_recache_tokens": 0,
+    "last_miss_at": null,
+    "last_miss_cause": null,
+    "miss_causes": {},
+    "recache_tokens_if_cold": 45000
+  },
+  "fast_mode": false,
+  "thinking": {
+    "enabled": true
+  },
+  "rate_limits": {
+    "five_hour": {
+      "used_percentage": 75,
+      "resets_at": 1792505580
+    },
+    "seven_day": {
+      "used_percentage": 40,
+      "resets_at": 1792681200
+    }
+  },
+  "vim": {
+    "mode": "NORMAL"
+  }
+}

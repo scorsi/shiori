@@ -3,7 +3,10 @@
 
 # `[ $segment]()` is a group with no style: it disappears with its leading space when the
 # segment has nothing to show.
-format = "$model[ $effort]()[ $context]()[ $rate_limits]()"
+format = """
+$model[ $effort]()[ $context]()[ $rate_limits]()
+$directory[ $git_branch]()[ $cost]()[ $session_name]()[ $vim_mode]()
+"""
 
 [model]
 format = "[$name]($style)"
@@ -39,4 +42,41 @@ style_warn = "yellow"
 style_critical = "red"
 threshold_warn = 70
 threshold_critical = 90
+disabled = false
+
+[cost]
+format = "[$usd]($style)[ $duration](dim)[ +$added](green)[ -$removed](red)"
+symbol = ""
+style = "yellow"
+disabled = false
+precision = 2
+
+[directory]
+format = "[$symbol$path]($style)"
+symbol = ""
+style = "blue"
+disabled = false
+truncation_length = 3
+home_symbol = "~"
+truncation_symbol = ".../"
+
+[git_branch]
+format = "[$symbol$branch]($style)"
+symbol = ""
+style = "magenta"
+disabled = false
+truncation_length = 0
+
+[session_name]
+format = "[$symbol$name]($style)"
+symbol = ""
+style = "dim"
+disabled = false
+
+[vim_mode]
+format = "[$symbol$mode]($style)"
+symbol = ""
+style = "bold"
+normal_style = "bold blue"
+insert_style = "bold green"
 disabled = false
