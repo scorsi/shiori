@@ -7,6 +7,9 @@ format = """
 $model[ $effort]()[ $context]()[ $fill$rate_limits]()
 $directory[ $git_branch]()[ $cost]()[ $session_name]()[ $vim_mode]()
 """
+palette = ""
+
+[palettes]
 
 [model]
 format = "[$name]($style)"

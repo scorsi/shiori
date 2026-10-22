@@ -1,7 +1,9 @@
 ## Style words (ADR 0005) to SGR escape sequences.
 
-import std/[strutils, parseutils]
+import std/[strutils, parseutils, tables]
 from std/unicode import runeAt, runeLenAt
+
+type Palette* = Table[string, string]
 
 const
   reset* = "\e[0m"
@@ -24,7 +26,9 @@ proc colourCodes(word: string, background: bool): string =
       ";" & $fromHex[int](word[5 .. 6])
   ""
 
-proc sgr*(style: string): string =
+proc isColour*(word: string): bool = colourCodes(word, false) != ""
+
+proc sgr*(style: string, palette = default(Palette)): string =
   ## The escape sequence for `style`, "" for an empty style. Raises ValueError on an unknown word.
   var codes: seq[string]
   for word in style.splitWhitespace:
@@ -38,7 +42,8 @@ proc sgr*(style: string): string =
       of "inverted": "7"
       else:
         let bg = word.startsWith("bg:")
-        let c = colourCodes(if bg: word[3 .. ^1] else: word, bg)
+        let colour = if bg: word[3 .. ^1] else: word
+        let c = colourCodes(palette.getOrDefault(colour, colour), bg)
         if c == "": raise newException(ValueError, "unknown style word: " & word)
         c
     if code != "": codes.add code

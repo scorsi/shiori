@@ -1,0 +1,101 @@
+# A complete preset for terminals using a Nerd Font.
+
+# `[ $segment]()` is a group with no style: it disappears with its leading space when the
+# segment has nothing to show.
+format = """
+$model[ $effort]()[ $context]()[ $fill$rate_limits]()
+$directory[ $git_branch]()[ $cost]()[ $session_name]()[ $vim_mode]()
+"""
+palette = "catppuccin-mocha"
+
+[palettes]
+
+[model]
+format = "[$symbol$name]($style)"
+symbol = " "
+style = "bold cyan"
+disabled = false
+
+[fill]
+format = "$symbol"
+symbol = " "
+style = ""
+disabled = false
+
+[effort]
+format = "[$symbol$level]($style)"
+symbol = " "
+style = "blue"
+disabled = false
+hide_levels = []
+
+[context]
+format = "[${symbol}\\[$bar\\] $percentage%]($style)[ ($tokens)](dim)"
+symbol = "󰍛 "
+style = "green"
+style_warn = "yellow"
+style_critical = "red"
+threshold_warn = 70
+threshold_critical = 90
+bar_width = 8
+bar_fill = "━"
+bar_empty = "─"
+disabled = false
+
+[rate_limits]
+format = "[${symbol}5h $five_hour%]($style)[ ($five_hour_reset)](dim)[ 7d $seven_day%]($style)[ ($seven_day_reset)](dim)"
+symbol = "󰔟 "
+style = "green"
+style_warn = "yellow"
+style_critical = "red"
+threshold_warn = 70
+threshold_critical = 90
+disabled = false
+
+[cost]
+format = "[$symbol$usd]($style)[ $duration](dim)[ +$added](green)[ -$removed](red)"
+symbol = "󰄨 "
+style = "yellow"
+disabled = false
+precision = 2
+
+[directory]
+format = "[$symbol$path]($style)"
+symbol = " "
+style = "blue"
+disabled = false
+truncation_length = 3
+home_symbol = "~"
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[$symbol$branch]($style)"
+symbol = " "
+style = "magenta"
+disabled = false
+truncation_length = 0
+
+[session_name]
+format = "[$symbol$name]($style)"
+symbol = ""
+style = "dim"
+disabled = false
+
+[vim_mode]
+format = "[$symbol$mode]($style)"
+symbol = ""
+style = "bold"
+normal_style = "bold blue"
+insert_style = "bold green"
+disabled = false
+
+# Catppuccin Mocha colours: https://github.com/catppuccin/palette
+[palettes.catppuccin-mocha]
+black = "#1e1e2e"
+red = "#f38ba8"
+green = "#a6e3a1"
+yellow = "#f9e2af"
+blue = "#89b4fa"
+magenta = "#cba6f7"
+cyan = "#94e2d5"
+white = "#cdd6f4"

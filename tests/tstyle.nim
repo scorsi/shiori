@@ -1,4 +1,4 @@
-import std/[unittest]
+import std/[tables, unittest]
 import ../src/shiori/[style]
 
 suite "style":
@@ -13,6 +13,11 @@ suite "style":
     for bad in ["blinky", "256", "#12345", "bg:nope"]:
       expect ValueError:
         discard sgr(bad)
+
+  test "palette colours precede built-ins for foregrounds and backgrounds":
+    let palette = {"green": "#a6e3a1", "accent": "208"}.toTable
+    check sgr("green bg:accent", palette) == "\e[38;2;166;227;161;48;5;208m"
+    check sgr("red", palette) == "\e[31m"
 
   test "display cells, ANSI, combining marks and emoji":
     for (text, width) in [("abc", 3), ("日本語", 6), ("e\u0301", 1), ("🐱", 2),

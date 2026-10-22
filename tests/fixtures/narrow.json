@@ -7,10 +7,10 @@
   "effort": {
     "level": "medium"
   },
-  "session_name": "Refactor 日本語 🐱",
+  "session_name": "日本語 🐱",
   "model": {
     "id": "claude-opus-5-5",
-    "display_name": "Opus 5.5"
+    "display_name": "Opus 🐱"
   },
   "workspace": {
     "current_dir": "/home/user/project",

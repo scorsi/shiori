@@ -8,7 +8,7 @@ type Lookup = proc(name: string): string
 # Decoration does not keep an otherwise empty group alive.
 const meta = ["symbol", "style", "fill"]
 
-proc expand(nodes: seq[Node], lookup: Lookup, styles: var seq[string],
+proc expand(nodes: seq[Node], lookup: Lookup, palette: Palette, styles: var seq[string],
     used, filled: var int): string =
   for n in nodes:
     case n.kind
@@ -22,10 +22,10 @@ proc expand(nodes: seq[Node], lookup: Lookup, styles: var seq[string],
       # A segment's own escapes end with a reset: restore the enclosing groups' styles.
       if '\e' in v and styles.len > 0: result.add styles.join
     of nkGroup:
-      let code = sgr(if n.style.startsWith("$"): lookup(n.style[1 .. ^1]) else: n.style)
+      let code = sgr((if n.style.startsWith("$"): lookup(n.style[1 .. ^1]) else: n.style), palette)
       styles.add code
       var (u, f) = (0, 0)
-      let inner = expand(n.children, lookup, styles, u, f)
+      let inner = expand(n.children, lookup, palette, styles, u, f)
       discard styles.pop
       used += u
       filled += f
@@ -33,10 +33,10 @@ proc expand(nodes: seq[Node], lookup: Lookup, styles: var seq[string],
       if code == "": result.add inner
       else: result.add code & inner & reset & styles.join
 
-proc renderFormat(f: Format, lookup: Lookup): string =
+proc renderFormat(f: Format, palette: Palette, lookup: Lookup): string =
   var styles: seq[string]
   var (u, f2) = (0, 0)
-  expand(f, lookup, styles, u, f2)
+  expand(f, lookup, palette, styles, u, f2)
 
 proc columns*(): int =
   try:
@@ -49,14 +49,17 @@ proc render*(inp: Input, c: Config, now: int64, width = columns()): string =
   ## The status line, possibly several lines; "" when nothing has anything to show.
   var cache: Table[string, string]
   let top = parseFormat(c.topFormat)
-  let line = renderFormat(top) do (name: string) -> string:
-    if name == "fill": return (if c.boolean("fill", "disabled"): "" else: "\0")
+  let line = renderFormat(top, c.palette) do (name: string) -> string:
+    if name == "fill":
+      if c.boolean("fill", "disabled"): return ""
+      let code = sgr(c.str("fill", "style"), c.palette)
+      return code & "\0" & (if code == "": "" else: reset)
     if name notin cache:
       let vars = evaluate(name, inp, c, now)
       cache[name] =
         if vars.len == 0: ""
         else:
-          renderFormat(parseFormat(c.str(name, "format"))) do (v: string) -> string:
+          renderFormat(parseFormat(c.str(name, "format")), c.palette) do (v: string) -> string:
             vars.getOrDefault(v)
     cache[name]
   for part in line.splitLines:
@@ -64,9 +67,8 @@ proc render*(inp: Input, c: Config, now: int64, width = columns()): string =
     if text.strip == "" or text.displayWidth == 0: continue
     let fill = part.find('\0')
     if fill >= 0:
-      let code = sgr(c.str("fill", "style"))
       let pad = padding(c.str("fill", "symbol"), width - text.displayWidth)
-      text = part[0 ..< fill] & code & pad & (if code == "": "" else: reset) &
+      text = part[0 ..< fill] & pad &
         part[fill + 1 .. ^1].replace("\0", "")
     text = text.clip(width)
     if text.displayWidth == 0: continue

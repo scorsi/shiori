@@ -6,6 +6,7 @@ import format, style
 
 type Config* = object
   user, defaults: TomlValueRef
+  palette*: Palette
 
 const plainToml = staticRead("../../presets/plain.toml")
 
@@ -34,17 +35,41 @@ proc topFormat*(c: Config): string =
 proc sameKind(a, b: TomlValueRef): bool =
   a.kind == b.kind or (a.isTable and b.isTable)
 
-proc checkValue(path: string, v: TomlValueRef) =
+proc checkFormat(f: Format, palette: Palette) =
+  for node in f:
+    if node.kind == nkGroup:
+      if not node.style.startsWith("$"): discard sgr(node.style, palette)
+      checkFormat(node.children, palette)
+
+proc checkValue(path: string, v: TomlValueRef, palette: Palette) =
   ## Formats and literal styles are parsed now, so a typo fails at load rather than at render.
   if v.kind != TomlKind.String: return
-  if path.endsWith("format"): discard parseFormat(v.stringVal)
-  elif path.contains("style") and not v.stringVal.startsWith("$"): discard sgr(v.stringVal)
+  if path.endsWith("format"): checkFormat(parseFormat(v.stringVal), palette)
+  elif path.contains("style") and not v.stringVal.startsWith("$"): discard sgr(v.stringVal, palette)
 
-proc validate(user, defaults: TomlValueRef) =
+proc readPalette(user: TomlValueRef): Palette =
+  let palettes = user.lookup("palettes")
+  if not palettes.isNil:
+    if not palettes.isTable: raise newException(ValueError, "wrong type for palettes")
+    for name, colours in palettes.tableVal:
+      if not colours.isTable: raise newException(ValueError, "wrong type for palettes." & name)
+      for colour, value in colours.tableVal:
+        if value.kind != TomlKind.String or not isColour(value.stringVal):
+          raise newException(ValueError, "invalid colour palettes." & name & "." & colour)
+  let active = user.lookup("palette")
+  if active.isNil: return
+  if active.kind != TomlKind.String: raise newException(ValueError, "wrong type for palette")
+  if active.stringVal == "": return
+  let colours = palettes.lookup(active.stringVal)
+  if colours.isNil: raise newException(ValueError, "unknown palette " & active.stringVal)
+  for colour, value in colours.tableVal: result[colour] = value.stringVal
+
+proc validate(user, defaults: TomlValueRef, palette: Palette) =
   for key, v in user.tableVal:
     let d = defaults.lookup(key)
     if d.isNil: raise newException(ValueError, "unknown key " & key)
     if not v.sameKind(d): raise newException(ValueError, "wrong type for " & key)
+    if key == "palettes": continue
     if v.isTable:
       for sub, sv in v.tableVal:
         let sd = d.lookup(sub)
@@ -54,15 +79,16 @@ proc validate(user, defaults: TomlValueRef) =
         if sv.kind == TomlKind.Array:
           for e in sv.arrayVal:
             if e.kind != TomlKind.String: raise newException(ValueError, "wrong type in " & path)
-        checkValue(path, sv)
+        checkValue(path, sv, palette)
     else:
-      checkValue(key, v)
+      checkValue(key, v, palette)
   # Top-level variables are segment names, which are the preset's tables.
   let top = user.lookup("format")
   if not top.isNil:
     for name in parseFormat(top.stringVal).variables:
       let d = defaults.lookup(name)
-      if d.isNil or not d.isTable: raise newException(ValueError, "unknown segment $" & name)
+      if d.isNil or not d.isTable or name == "palettes":
+        raise newException(ValueError, "unknown segment $" & name)
 
 proc defaultConfig*(): Config =
   let d = Toml.decode(plainToml, TomlValueRef)
@@ -72,7 +98,8 @@ proc parseConfig*(text: string): Config =
   ## Raises on a TOML error, an unknown key, a wrongly typed value or a bad format or style.
   result = defaultConfig()
   let user = Toml.decode(text, TomlValueRef)
-  validate(user, result.defaults)
+  result.palette = readPalette(user)
+  validate(user, result.defaults, result.palette)
   result.user = user
 
 proc configPath*(): string =
